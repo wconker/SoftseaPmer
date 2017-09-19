@@ -1,0 +1,4 @@
+include ':app', ':FlycoTabLayout_Lib', ':autoScrollViewPager', ':library'
+project(':FlycoTabLayout_Lib').projectDir=new File('Module/FlycoTabLayout_Lib')
+project(':autoScrollViewPager').projectDir=new File('Module/autoScrollViewPager')
+project(':library').projectDir=new File('Module/library')
