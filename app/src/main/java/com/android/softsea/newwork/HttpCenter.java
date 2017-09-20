@@ -6,6 +6,9 @@ import com.android.softsea.callback.MessageCallBack;
 import com.android.softsea.utils.SharedPrefsUtil;
 
 import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -28,6 +31,7 @@ public class HttpCenter {
     public static OkHttpClient okHttpClient;
     public static WebSocket webSocket = null;
     public static MessageCallBack messageCallBack;
+    ExecutorService mExecutor = Executors.newFixedThreadPool(2);
 
     public static synchronized void InstancesOkhttp() {
         if (okHttpClient == null) {
@@ -48,7 +52,7 @@ public class HttpCenter {
 
     public void send(String str) {
         final String m = str;
-        new Thread(new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 try {
@@ -58,8 +62,10 @@ public class HttpCenter {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        };
+        mExecutor.execute(runnable);
     }
+
     public static void initWebsocket() {
         String url = "ws://180.153.88.58:5699";
         final Request request = new Request.Builder()

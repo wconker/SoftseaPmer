@@ -70,7 +70,6 @@ public class ScrollingActivity extends BaseActivity implements MessageCallBack {
     protected void initViews(Bundle savedInstanceState) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         DealMessageWithMe();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -78,20 +77,16 @@ public class ScrollingActivity extends BaseActivity implements MessageCallBack {
         proId = getIntent().getStringExtra("proId");
         setTitle(proName);
         initRecyclerView();
-
-
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         messageCenter = new MessageCenter(this);
         messageCenter.setCallBackInterFace(this);
         refresh.setRefreshing(true);
-
+        messageCenter.SendYouMessage(messageCenter.ChooseCommand().project(String.valueOf(proId)));
         Log.e("e", messageCenter.ChooseCommand().project(String.valueOf(proId)));
     }
-
     private void setRefresh() {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -159,6 +154,7 @@ public class ScrollingActivity extends BaseActivity implements MessageCallBack {
                     Type type = new TypeToken<ProjectInfo>() {
                     }.getType();
                     ProjectInfo projectInfo = gson.fromJson(String.valueOf(cmd), type);
+                    mlist.clear();
                     mlist.addAll(projectInfo.getData());
                     projectAdapter.notifyDataSetChanged();
                 }

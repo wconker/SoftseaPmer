@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.android.softsea.BuildConfig;
 import com.android.softsea.R;
 import com.android.softsea.adapter.MyAdapter.ProjectAdapter;
@@ -36,24 +35,19 @@ import com.android.softsea.utils.UpdateManager;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, MessageCallBack {
-
     private MessageCenter messageCenter;
     private TextView username, going;
     private Context mContext = this;
@@ -69,12 +63,10 @@ public class MainActivity extends BaseActivity
 
         ButterKnife.bind(this);
     }
-
     @Override
     public int getLayoutId() {
         return R.layout.activity_main;
     }
-
     @Override
     protected void initViews(Bundle savedInstanceState) {
         ControlCenter();
@@ -92,21 +84,13 @@ public class MainActivity extends BaseActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
         navigationView.setNavigationItemSelectedListener(this);
-
         View headerLayout = navigationView.getHeaderView(0);
-
         userhead = headerLayout.findViewById(R.id.imageView);
         username = headerLayout.findViewById(R.id.userName);
         going = headerLayout.findViewById(R.id.going);
-
-
     }
-
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -116,28 +100,21 @@ public class MainActivity extends BaseActivity
             super.onBackPressed();
         }
     }
-
     private void ControlCenter() {
-
         observer = new Observer<String>() {
             @Override
             public void onCompleted() {
-
-
             }
-
             @Override
             public void onError(Throwable e) {
-
             }
-
             @Override
             public void onNext(String s) {
                 JSONObject cmd = JSONUtils.StringToJSON(s);
                 if (JSONUtils.getString(cmd, "cmd").equals("getMyInfo")) {
+                    messageCenter.SendYouMessage(messageCenter.ChooseCommand().projectGetList());
                     JSONArray userDataList = JSONUtils.getJSONArray(cmd, "data");
                     for (int i = 0; i < userDataList.length(); i++) {
-
                         try {
                             JSONObject obj = userDataList.getJSONObject(i);
                             SharedPrefsUtil.putValue(mContext,
@@ -168,6 +145,7 @@ public class MainActivity extends BaseActivity
                     Type type = new TypeToken<ProjectBean>() {
                     }.getType();
                     ProjectBean ProjectBean = gson.fromJson(String.valueOf(cmd), type);
+                    mlist.clear();
                     mlist.addAll(ProjectBean.getData());
                     projectAdapter.notifyDataSetChanged();
                 }
@@ -180,17 +158,13 @@ public class MainActivity extends BaseActivity
         super.onResume();
         messageCenter.setCallBackInterFace(this);
         messageCenter.SendYouMessage(messageCenter.ChooseCommand().getMyInfo());
-        messageCenter.SendYouMessage(messageCenter.ChooseCommand().projectGetList());
-
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -239,7 +213,7 @@ public class MainActivity extends BaseActivity
     @Override
     public void onMessage(String str) {
 
-        Log.e("Conker", "MainActivity" +  "====" + str);
+        Log.e("Conker", "MainActivity" + "====" + str);
         Observable.just(str)
                 .observeOn(AndroidSchedulers
                         .mainThread())
